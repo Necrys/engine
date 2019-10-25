@@ -3,6 +3,20 @@ project ( engine LANGUAGES CXX )
 
 include ( FetchContent )
 
+
+
+FetchContent_Declare (
+  glregistry
+  GIT_REPOSITORY https://github.com/KhronosGroup/OpenGL-Registry.git
+)
+
+FetchContent_GetProperties ( glregistry )
+if ( NOT glregistry_POPULATED )
+  FetchContent_Populate ( glregistry )
+  message( STATUS "Catch source dir: ${glregistry_SOURCE_DIR}" )
+  message( STATUS "Catch binary dir: ${glregistry_BINARY_DIR}" )
+endif()
+
 FetchContent_Declare (
   glm
   GIT_REPOSITORY "https://github.com/g-truc/glm.git"
@@ -146,6 +160,7 @@ target_include_directories ( engine
     ${CMAKE_CURRENT_SOURCE_DIR}/src
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${glregistry_SOURCE_DIR}
     ${glm_SOURCE_DIR}
     ${imgui_SOURCE_DIR}
     ${glfw_SOURCE_DIR}
