@@ -13,8 +13,8 @@ FetchContent_Declare (
 FetchContent_GetProperties ( glregistry )
 if ( NOT glregistry_POPULATED )
   FetchContent_Populate ( glregistry )
-  message( STATUS "Catch source dir: ${glregistry_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${glregistry_BINARY_DIR}" )
+  message( STATUS "GL Registry source dir: ${glregistry_SOURCE_DIR}" )
+  message( STATUS "GL Registry binary dir: ${glregistry_BINARY_DIR}" )
 endif()
 
 FetchContent_Declare (
@@ -26,8 +26,8 @@ FetchContent_Declare (
 FetchContent_GetProperties ( glm ) #mispelled name in original post
 if ( NOT glm_POPULATED )
   FetchContent_Populate ( glm )
-  message( STATUS "Catch source dir: ${glm_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${glm_BINARY_DIR}" )
+  message( STATUS "GLM source dir: ${glm_SOURCE_DIR}" )
+  message( STATUS "GLM binary dir: ${glm_BINARY_DIR}" )
 endif()
 
 FetchContent_Declare (
@@ -39,8 +39,8 @@ FetchContent_Declare (
 FetchContent_GetProperties ( imgui ) #mispelled name in original post
 if ( NOT imgui_POPULATED )
   FetchContent_Populate ( imgui )
-  message( STATUS "Catch source dir: ${imgui_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${imgui_BINARY_DIR}" )
+  message( STATUS "ImGui source dir: ${imgui_SOURCE_DIR}" )
+  message( STATUS "ImGui binary dir: ${imgui_BINARY_DIR}" )
   
   set ( IMGUI_SOURCES
     ${imgui_SOURCE_DIR}/imgui.cpp
@@ -58,8 +58,8 @@ FetchContent_Declare (
 FetchContent_GetProperties ( glfw ) #mispelled name in original post
 if ( NOT glfw_POPULATED )
   FetchContent_Populate ( glfw )
-  message( STATUS "Catch source dir: ${glfw_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${glfw_BINARY_DIR}" )
+  message( STATUS "GLFW source dir: ${glfw_SOURCE_DIR}" )
+  message( STATUS "GLFW binary dir: ${glfw_BINARY_DIR}" )
   set ( GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "" )
   set ( GLFW_BUILD_TESTS OFF CACHE INTERNAL "" )
   set ( GLFW_BUILD_DOCS OFF CACHE INTERNAL "" )
@@ -74,8 +74,8 @@ FetchContent_Declare (
 FetchContent_GetProperties ( lodepng ) #mispelled name in original post
 if ( NOT lodepng_POPULATED )
   FetchContent_Populate ( lodepng )
-  message( STATUS "Catch source dir: ${lodepng_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${lodepng_BINARY_DIR}" )
+  message( STATUS "lodepng source dir: ${lodepng_SOURCE_DIR}" )
+  message( STATUS "lodepng binary dir: ${lodepng_BINARY_DIR}" )
 
   set ( LODEPNG_SOURCES
     ${lodepng_SOURCE_DIR}/lodepng.cpp
@@ -91,8 +91,8 @@ FetchContent_Declare (
 FetchContent_GetProperties ( jsoncpp ) #mispelled name in original post
 if ( NOT jsoncpp_POPULATED )
   FetchContent_Populate ( jsoncpp )
-  message( STATUS "Catch source dir: ${jsoncpp_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${jsoncpp_BINARY_DIR}" )
+  message( STATUS "jsoncpp source dir: ${jsoncpp_SOURCE_DIR}" )
+  message( STATUS "jsoncpp binary dir: ${jsoncpp_BINARY_DIR}" )
   set ( JSONCPP_WITH_TESTS OFF CACHE INTERNAL "" )
   set ( JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE INTERNAL "" )
   set ( JSONCPP_WITH_PKGCONFIG_SUPPORT OFF CACHE INTERNAL "" )
@@ -160,7 +160,7 @@ target_include_directories ( engine
     ${CMAKE_CURRENT_SOURCE_DIR}/src
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${glregistry_SOURCE_DIR}
+    ${glregistry_SOURCE_DIR}/api
     ${glm_SOURCE_DIR}
     ${imgui_SOURCE_DIR}
     ${glfw_SOURCE_DIR}
