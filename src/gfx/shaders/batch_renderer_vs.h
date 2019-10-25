@@ -1,0 +1,20 @@
+#pragma once
+
+static char default_vs_glsl_str[] = "" "#version 150 core\n"
+"\n"
+"uniform mat4 projection;\n"
+"\n"
+"in vec3 position;\n"
+"in vec4 color;\n"
+"in vec2 texcoords;\n"
+"\n"
+"out vec4 fragmentColor;\n"
+"out vec2 tex;\n"
+"\n"
+"void main(void)\n"
+"{\n"
+"    gl_Position   = projection * vec4(position, 1.0);\n"
+"    fragmentColor = (color/255.0);\n"
+"    tex = texcoords;\n"
+"}\n"
+;
