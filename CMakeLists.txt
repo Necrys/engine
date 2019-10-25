@@ -85,18 +85,6 @@ if ( NOT jsoncpp_POPULATED )
   add_subdirectory ( ${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR} ) #can be case insensitive
 endif()
 
-FetchContent_Declare (
-  oglapi
-  GIT_REPOSITORY "https://github.com/KhronosGroup/OpenGL-Registry.git"
-)
-
-FetchContent_GetProperties ( oglapi ) #mispelled name in original post
-if ( NOT oglapi_POPULATED )
-  FetchContent_Populate ( oglapi )
-  message( STATUS "Catch source dir: ${oglapi_SOURCE_DIR}" )
-  message( STATUS "Catch binary dir: ${oglapi_BINARY_DIR}" )
-endif()
-
 if ( UNIX )
   set ( GL_LIB GL )
 elseif ( WIN32 )
@@ -145,7 +133,6 @@ endif ( USE_DYNAMIC_RUNTIME )
 
 add_subdirectory ( include )
 add_subdirectory ( src )
-add_subdirectory ( test )
 
 add_library ( engine ${LIB_TYPE}
   ${ENGINE_SOURCES}
@@ -162,9 +149,7 @@ target_include_directories ( engine
     ${glm_SOURCE_DIR}
     ${imgui_SOURCE_DIR}
     ${glfw_SOURCE_DIR}
-    ${glfw_SOURCE_DIR}/deps
     ${lodepng_SOURCE_DIR}
-    ${oglapi_SOURCE_DIR}/api
 )
 
 set_target_properties ( engine PROPERTIES
