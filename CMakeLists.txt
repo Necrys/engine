@@ -3,8 +3,6 @@ project ( engine LANGUAGES CXX )
 
 include ( FetchContent )
 
-
-
 FetchContent_Declare (
   glregistry
   GIT_REPOSITORY https://github.com/KhronosGroup/OpenGL-Registry.git
@@ -15,6 +13,18 @@ if ( NOT glregistry_POPULATED )
   FetchContent_Populate ( glregistry )
   message( STATUS "GL Registry source dir: ${glregistry_SOURCE_DIR}" )
   message( STATUS "GL Registry binary dir: ${glregistry_BINARY_DIR}" )
+endif()
+
+FetchContent_Declare (
+  eglregistry
+  GIT_REPOSITORY https://github.com/KhronosGroup/EGL-Registry.git
+)
+
+FetchContent_GetProperties ( eglregistry )
+if ( NOT eglregistry_POPULATED )
+  FetchContent_Populate ( eglregistry )
+  message( STATUS "EGL Registry source dir: ${eglregistry_SOURCE_DIR}" )
+  message( STATUS "EGL Registry binary dir: ${eglregistry_BINARY_DIR}" )
 endif()
 
 FetchContent_Declare (
@@ -161,6 +171,7 @@ target_include_directories ( engine
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${glregistry_SOURCE_DIR}/api
+    ${eglregistry_SOURCE_DIR}/api
     ${glm_SOURCE_DIR}
     ${imgui_SOURCE_DIR}
     ${glfw_SOURCE_DIR}
