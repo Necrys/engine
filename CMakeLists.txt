@@ -1,113 +1,9 @@
-cmake_minimum_required ( VERSION 3.12.1 FATAL_ERROR )
-project ( engine LANGUAGES CXX )
+cmake_minimum_required( VERSION 3.12.1 FATAL_ERROR )
+project( engine LANGUAGES CXX )
 
-include ( FetchContent )
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 
-FetchContent_Declare (
-  glregistry
-  GIT_REPOSITORY https://github.com/KhronosGroup/OpenGL-Registry.git
-)
-
-FetchContent_GetProperties ( glregistry )
-if ( NOT glregistry_POPULATED )
-  FetchContent_Populate ( glregistry )
-  message( STATUS "GL Registry source dir: ${glregistry_SOURCE_DIR}" )
-  message( STATUS "GL Registry binary dir: ${glregistry_BINARY_DIR}" )
-endif()
-
-FetchContent_Declare (
-  eglregistry
-  GIT_REPOSITORY https://github.com/KhronosGroup/EGL-Registry.git
-)
-
-FetchContent_GetProperties ( eglregistry )
-if ( NOT eglregistry_POPULATED )
-  FetchContent_Populate ( eglregistry )
-  message( STATUS "EGL Registry source dir: ${eglregistry_SOURCE_DIR}" )
-  message( STATUS "EGL Registry binary dir: ${eglregistry_BINARY_DIR}" )
-endif()
-
-FetchContent_Declare (
-  glm
-  GIT_REPOSITORY "https://github.com/g-truc/glm.git"
-  GIT_TAG        "0.9.9.5"
-)
-
-FetchContent_GetProperties ( glm ) #mispelled name in original post
-if ( NOT glm_POPULATED )
-  FetchContent_Populate ( glm )
-  message( STATUS "GLM source dir: ${glm_SOURCE_DIR}" )
-  message( STATUS "GLM binary dir: ${glm_BINARY_DIR}" )
-endif()
-
-FetchContent_Declare (
-  imgui
-  GIT_REPOSITORY "https://github.com/ocornut/imgui.git"
-  GIT_TAG        "v1.69"
-)
-
-FetchContent_GetProperties ( imgui ) #mispelled name in original post
-if ( NOT imgui_POPULATED )
-  FetchContent_Populate ( imgui )
-  message( STATUS "ImGui source dir: ${imgui_SOURCE_DIR}" )
-  message( STATUS "ImGui binary dir: ${imgui_BINARY_DIR}" )
-  
-  set ( IMGUI_SOURCES
-    ${imgui_SOURCE_DIR}/imgui.cpp
-    ${imgui_SOURCE_DIR}/imgui_draw.cpp
-    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-  )
-endif()
-
-FetchContent_Declare (
-  glfw
-  GIT_REPOSITORY "https://github.com/glfw/glfw.git"
-  GIT_TAG        "3.2.1"
-)
-
-FetchContent_GetProperties ( glfw ) #mispelled name in original post
-if ( NOT glfw_POPULATED )
-  FetchContent_Populate ( glfw )
-  message( STATUS "GLFW source dir: ${glfw_SOURCE_DIR}" )
-  message( STATUS "GLFW binary dir: ${glfw_BINARY_DIR}" )
-  set ( GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "" )
-  set ( GLFW_BUILD_TESTS OFF CACHE INTERNAL "" )
-  set ( GLFW_BUILD_DOCS OFF CACHE INTERNAL "" )
-  add_subdirectory ( ${glfw_SOURCE_DIR} ${glfw_BINARY_DIR} ) #can be case insensitive
-endif()
-
-FetchContent_Declare (
-  lodepng
-  GIT_REPOSITORY "https://github.com/lvandeve/lodepng.git"
-)
-
-FetchContent_GetProperties ( lodepng ) #mispelled name in original post
-if ( NOT lodepng_POPULATED )
-  FetchContent_Populate ( lodepng )
-  message( STATUS "lodepng source dir: ${lodepng_SOURCE_DIR}" )
-  message( STATUS "lodepng binary dir: ${lodepng_BINARY_DIR}" )
-
-  set ( LODEPNG_SOURCES
-    ${lodepng_SOURCE_DIR}/lodepng.cpp
-  )
-endif()
-
-FetchContent_Declare (
-  jsoncpp
-  GIT_REPOSITORY "https://github.com/open-source-parsers/jsoncpp.git"
-  GIT_TAG        "0.10.7"
-)
-
-FetchContent_GetProperties ( jsoncpp ) #mispelled name in original post
-if ( NOT jsoncpp_POPULATED )
-  FetchContent_Populate ( jsoncpp )
-  message( STATUS "jsoncpp source dir: ${jsoncpp_SOURCE_DIR}" )
-  message( STATUS "jsoncpp binary dir: ${jsoncpp_BINARY_DIR}" )
-  set ( JSONCPP_WITH_TESTS OFF CACHE INTERNAL "" )
-  set ( JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE INTERNAL "" )
-  set ( JSONCPP_WITH_PKGCONFIG_SUPPORT OFF CACHE INTERNAL "" )
-  add_subdirectory ( ${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR} ) #can be case insensitive
-endif()
+include( cmake/fetch_dependencies.cmake )
 
 if ( UNIX )
   set ( GL_LIB GL )
@@ -115,57 +11,65 @@ elseif ( WIN32 )
   set ( GL_LIB OpenGL32 )
 endif ()
 
-option ( BUILD_SHARED_LIB "Build shared library" OFF )
-option ( USE_DYNAMIC_RUNTIME "Use dynamic runtime" OFF )
+option( BUILD_SHARED_LIB "Build shared library" OFF )
 
 if ( BUILD_SHARED_LIB )
-  set ( INTERNAL_DEFINITIONS
+  set( INTERNAL_DEFINITIONS
     ${INTERNAL_DEFINITIONS}
     ENGINE_LIB_SHARED
     BUILD_DLL
   )
-  set ( EXTERNAL_DEFINITIONS
+  set( EXTERNAL_DEFINITIONS
     ${EXTERNAL_DEFINITIONS}
     ENGINE_LIB_SHARED
   )
-  set ( LIB_TYPE SHARED )
+  set( LIB_TYPE SHARED )
 else ()
-  set ( LIB_TYPE STATIC )
+  set( LIB_TYPE STATIC )
 endif ( BUILD_SHARED_LIB )
 
+option( USE_DYNAMIC_RUNTIME "Use dynamic runtime" OFF )
+
 if ( USE_DYNAMIC_RUNTIME )
-  set ( ADDITIONAL_LINK_FLAGS "" )
+  set( ADDITIONAL_LINK_FLAGS "" )
 else ()
   if ( MINGW )
-    set ( ADDITIONAL_LINK_FLAGS -static-libgcc -static-libstdc++ -static )
+    set( ADDITIONAL_LINK_FLAGS -static-libgcc -static-libstdc++ -static )
   elseif ( MSVC )
-    set ( ADDITIONAL_LINK_FLAGS "" )
+    set( ADDITIONAL_LINK_FLAGS "" )
     foreach ( flag CMAKE_CXX_FLAGS
                    CMAKE_CXX_FLAGS_DEBUG
                    CMAKE_CXX_FLAGS_RELEASE
                    CMAKE_CXX_FLAGS_MINSIZEREL
                    CMAKE_CXX_FLAGS_RELWITHDEBINFO )
       if ( ${flag} MATCHES "/MD" )
-        string ( REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}" )
+        string( REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}" )
       endif ()
       if ( ${flag} MATCHES "/MDd" )
-        string ( REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}" )
+        string( REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}" )
       endif ()
     endforeach ()
   endif ()
 endif ( USE_DYNAMIC_RUNTIME )
 
-add_subdirectory ( include )
-add_subdirectory ( src )
+add_subdirectory( include )
+add_subdirectory( src )
 
-add_library ( engine ${LIB_TYPE}
+add_library( ${PROJECT_NAME} ${LIB_TYPE}
   ${ENGINE_SOURCES}
   ${ENGINE_HEADERS}
   ${IMGUI_SOURCES}
   ${LODEPNG_SOURCES}
+  ${GLAD}
 )
 
-target_include_directories ( engine
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+  set( _CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -Wall -pedantic -Wextra" CACHE STRING "" FORCE )
+elseif ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
+  set( _CMAKE_EXE_LINKER_FLAGS "-static -Wall -pedantic -Wextra" CACHE STRING "" FORCE )
+endif()
+
+target_include_directories( ${PROJECT_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
   PUBLIC
@@ -178,13 +82,13 @@ target_include_directories ( engine
     ${lodepng_SOURCE_DIR}
 )
 
-set_target_properties ( engine PROPERTIES
+set_target_properties( ${PROJECT_NAME} PROPERTIES
   CXX_STANDARD 17
   CXX_STANDARD_REQUIRED YES
   CXX_EXTENSIONS NO
 )
 
-target_link_libraries ( engine
+target_link_libraries( ${PROJECT_NAME}
   PUBLIC
     ${ADDITIONAL_LINK_FLAGS}
   PRIVATE
@@ -193,7 +97,7 @@ target_link_libraries ( engine
     ${GL_LIB}
 )
 
-target_compile_definitions ( engine
+target_compile_definitions( ${PROJECT_NAME}
   PRIVATE
     ${INTERNAL_DEFINITIONS}
   PUBLIC
