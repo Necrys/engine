@@ -28,6 +28,7 @@ private:
         ePoints    = 1,
         eLines     = 2,
         eTriangles = 3,
+        eQuads     = 4,
     };
 
 public:

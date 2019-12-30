@@ -17,7 +17,7 @@ BatchRenderer::BatchRenderer():
     m_log("BATCHRENDERER"),
     m_VBOData(nullptr),
     m_VBOCurrentPos(0),
-    m_currPrimitiveType(eTriangles),
+    m_currPrimitiveType(eQuads),
     m_positionLocation(-1),
     m_colorLocation(-1),
     m_texcoordLocation(-1),
@@ -321,9 +321,9 @@ void BatchRenderer::drawQuad(const Quad& quad,
         m_currTexture = texture ? texture : m_defaultTex;
     }
 
-    if (eTriangles != m_currPrimitiveType) {
+    if (eQuads != m_currPrimitiveType) {
         render();
-        m_currPrimitiveType = eTriangles;
+        m_currPrimitiveType = eQuads;
     }
 
     if (m_VBOCurrentPos + 4 > m_maxVBOVertexCount) {
@@ -402,8 +402,13 @@ void BatchRenderer::render() {
     }
 
     switch (m_currPrimitiveType) {
-    case eTriangles:
+    case eQuads:
         glDrawElements(GL_TRIANGLES, (m_VBOCurrentPos / 4) * 6, GL_UNSIGNED_SHORT, 0);
+        OGL_CHECK_ERRORS();
+        m_primitivesRendered += m_VBOCurrentPos / 3;
+        break;
+    case eTriangles:
+        glDrawArrays(GL_TRIANGLES, 0, m_VBOCurrentPos);
         OGL_CHECK_ERRORS();
         m_primitivesRendered += m_VBOCurrentPos / 3;
         break;
