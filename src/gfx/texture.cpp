@@ -90,8 +90,8 @@ uint32_t Texture::height() const {
     return m_height;
 }
 
-TexturePtr Texture::loadFromPNG(const char* path, bool genMipmaps) {
-    log.debug("loadFromPNG \"%s\"", path);
+TexturePtr Texture::loadFromPNG(const std::string& path, bool genMipmaps) {
+    log.debug("loadFromPNG \"%s\"", path.c_str());
 
     auto buffer = helper::FileBuffer::read(path);
     if (!buffer) {
@@ -107,7 +107,7 @@ TexturePtr Texture::loadFromPNG(const char* path, bool genMipmaps) {
         buffer->size(), LCT_RGBA, 8);
 
     if (0 != result) {
-        log.error("Failed to load %s: %s", path, lodepng_error_text(result));
+        log.error("Failed to load %s: %s", path.c_str(), lodepng_error_text(result));
         return nullptr;
     }
 
@@ -116,7 +116,7 @@ TexturePtr Texture::loadFromPNG(const char* path, bool genMipmaps) {
         return nullptr;
     }
 
-    log.debug("loadFromPNG \"%s\" SUCCESS", path);
+    log.debug("loadFromPNG \"%s\" SUCCESS", path.c_str());
 
     return texture;
 }

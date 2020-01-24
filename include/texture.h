@@ -16,7 +16,7 @@ public:
     Texture();
     ~Texture();
 
-    static TexturePtr loadFromPNG(const char* path, bool genMipmaps = false);
+    static TexturePtr loadFromPNG(const std::string& path, bool genMipmaps = false);
 
     bool setData(const uint8_t* pixels,
                  const uint32_t width,
