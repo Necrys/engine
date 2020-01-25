@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <string>
 
 namespace engine {
 namespace resources {
