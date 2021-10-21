@@ -19,14 +19,14 @@ Tileset::Tileset() :
   m_dummy(nullptr, 0, 0, 0, 0) {
 }
 
-Tileset Tileset::loadFromFile(const std::string& path) {
+TilesetPtr Tileset::loadFromFile(const std::string& path) {
   LoggerIf log("TILESET");
-  Tileset tileset;
+  TilesetPtr tileset;
 
   auto tilesetFile = FileBuffer::read(path);
   if (!tilesetFile) {
     log.error("Failed to load tileset file \"%s\"", path.c_str());
-    return Tileset();
+    return TilesetPtr();
   }
 
   Json::CharReaderBuilder rb;
@@ -40,12 +40,12 @@ Tileset Tileset::loadFromFile(const std::string& path) {
 
   if (!result) {
     log.error("Failed to parse tileset file \"%s\": %s", path.c_str(), errors.c_str());
-    return Tileset();
+    return TilesetPtr();
   }
 
   if (!doc[strImageNode]) {
     log.error("Can't find image node");
-    return Tileset();
+    return TilesetPtr();
   }
 
   // extract directory from path
@@ -59,20 +59,20 @@ Tileset Tileset::loadFromFile(const std::string& path) {
   auto tex = resources::Texture::loadFromPNG(imagePath.c_str());
   if (!tex) {
     log.error("Can't load texture \"%s\"", imagePath);
-    return Tileset();
+    return TilesetPtr();
   }
 
   uint32_t tileWidth, tileHeight;
 
   if (!doc[strTileWidthNode]) {
     log.error("Can't find tile width node");
-    return Tileset();
+    return TilesetPtr();
   }
   tileWidth = doc[strTileWidthNode].asUInt();
 
   if (!doc[strTileHeightNode]) {
     log.error("Can't find tile height node");
-    return Tileset();
+    return TilesetPtr();
   }
   tileHeight = doc[strTileHeightNode].asUInt();
 
@@ -87,7 +87,8 @@ Tileset Tileset::loadFromFile(const std::string& path) {
     tilesCount = doc[strImageWidthNode].asUInt();
   }
 
-  tileset.m_tiles.reserve(tilesCount);
+  tileset = std::make_unique< Tileset >();
+  tileset->m_tiles.reserve(tilesCount);
 
   uint32_t sx, sy, sw, sh;
 
@@ -97,7 +98,7 @@ Tileset Tileset::loadFromFile(const std::string& path) {
       sy = i * tileHeight;
       sw = sx + tileWidth;
       sh = sy + tileHeight;
-      tileset.m_tiles.emplace_back(gfx::Sprite(tex, sx, sy, sw, sh));
+      tileset->m_tiles.emplace_back(gfx::Sprite(tex, sx, sy, sw, sh));
     }
   }
 

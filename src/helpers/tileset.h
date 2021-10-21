@@ -4,15 +4,19 @@
 #include <sprite.h>
 
 #include <vector>
+#include <memory>
 
 namespace engine {
 namespace helper {
+
+class Tileset;
+using TilesetPtr = std::unique_ptr< Tileset >;
 
 class Tileset {
 public:
   Tileset();
 
-  static Tileset loadFromFile(const std::string& path);
+  static TilesetPtr loadFromFile(const std::string& path);
 
   gfx::Sprite& getTile(const uint32_t id);
   size_t size() const;
